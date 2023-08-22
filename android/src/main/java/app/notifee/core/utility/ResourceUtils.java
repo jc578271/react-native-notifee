@@ -97,17 +97,27 @@ public class ResourceUtils {
     final int height = bitmap.getHeight();
 
     if (width > height) {
+      int padding = height/5;
       output = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
       int left = (width - height) / 2;
       int right = left + height;
-      srcRect = new Rect(left, 0, right, height);
+      srcRect = new Rect(
+              left - padding,
+              0 - padding,
+              right + padding,
+              height + padding);
       dstRect = new Rect(0, 0, height, height);
       r = height / 2;
     } else {
+      int padding = width/5;
       output = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
-      int top = (height - width) / 2;
-      int bottom = top + width;
-      srcRect = new Rect(0, top, width, bottom);
+//      int top = (height - width) / 2;
+//      int bottom = top + width;
+      srcRect = new Rect(
+              - padding,
+              - padding,
+              width + padding,
+              width + padding);
       dstRect = new Rect(0, 0, width, width);
       r = width / 2;
     }

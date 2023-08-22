@@ -168,7 +168,7 @@ public class ResourceUtils {
         new BaseBitmapDataSubscriber() {
           @Override
           protected void onNewResultImpl(@Nullable Bitmap bitmap) {
-            Bitmap roundedBitMap = getCircularBitmap(bitmap)
+            Bitmap roundedBitMap = getCircularBitmap(bitmap);
             bitmapTCS.setResult(roundedBitMap);
           }
 

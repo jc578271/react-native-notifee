@@ -38,8 +38,8 @@ def findNodeModulePath(baseDir, packageName) {
   return null
 }
 
-//def notifeeDir = findNodeModulePath(projectDir, "@notifee/react-native") ?: "$rootDir/../node_modules/@notifee/react-native"
-//println ":${project.name} @notifee/react-native found at $notifeeDir"
+def notifeeDir = findNodeModulePath(projectDir, "@notifee/react-native") ?: "$rootDir/../node_modules/@notifee/react-native"
+println ":${project.name} @notifee/react-native found at $notifeeDir"
 
 //if (project.hasProperty('reactNativeProjects')) {
 //  reactNativeProjects.each { dependent ->
@@ -153,12 +153,12 @@ dependencies {
 
 ReactNative.shared.applyPackageVersion()
 ReactNative.shared.applyDefaultExcludes()
-ReactNative.module.applyAndroidVersions()
-ReactNative.module.applyReactNativeDependency("api")
+ReactNative.module?.applyAndroidVersions()
+ReactNative.module?.applyReactNativeDependency("api")
 rootProject.allprojects {
  repositories {
    maven {
-     url "$rootDir/../node_modules/react-native/android"
+     url "$notifeeDir/android"
    }
  }
 }

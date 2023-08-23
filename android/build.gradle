@@ -128,12 +128,12 @@ repositories {
 
 dependencies {
   implementation 'androidx.concurrent:concurrent-futures:1.1.0' // https://developer.android.com/jetpack/androidx/releases/concurrent
-  implementation 'com.google.android.gms:play-services-tasks:18.0.1' // https://developers.google.com/android/guides/releases
-  implementation 'androidx.work:work-runtime:2.8.0' // https://developer.android.com/jetpack/androidx/releases/work
+  implementation 'com.google.android.gms:play-services-tasks:18.0.2' // https://developers.google.com/android/guides/releases
+  implementation 'androidx.work:work-runtime:2.8.1' // https://developer.android.com/jetpack/androidx/releases/work
   implementation 'org.greenrobot:eventbus:3.3.1' // https://github.com/greenrobot/EventBus/releases
-  implementation 'androidx.lifecycle:lifecycle-process:2.3.1'
+  implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
 
-  api 'androidx.annotation:annotation:1.3.0' // https://developer.android.com/jetpack/androidx/releases/annotation
+  api 'androidx.annotation:annotation:1.6.0' // https://developer.android.com/jetpack/androidx/releases/annotation
   api 'com.facebook.fresco:fresco:2.6.0' // https://github.com/facebook/fresco/releases
 
   def room_version = '2.5.0' // https://developer.android.com/jetpack/androidx/releases/room
@@ -145,10 +145,10 @@ dependencies {
   annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
 
   testImplementation 'junit:junit:4.13.2' // https://github.com/junit-team/junit4/releases
-  androidTestImplementation 'androidx.test.ext:junit:1.1.3' // https://developer.android.com/jetpack/androidx/releases/test
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0' // see above
+  androidTestImplementation 'androidx.test.ext:junit:1.1.5' // https://developer.android.com/jetpack/androidx/releases/test
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1' // see above
   androidTestImplementation "androidx.room:room-testing:$room_version"
-  androidTestImplementation "androidx.test:monitor:1.4.0"
+  androidTestImplementation "androidx.test:monitor:1.6.1"
 }
 
 ReactNative.shared.applyPackageVersion()

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="io.invertase.notifee">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
   <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -18,7 +17,7 @@
   <application>
     <!-- Receiver Service -->
     <service
-      android:name=".ReceiverService"
+      android:name="app.notifee.core.ReceiverService"
       android:exported="false" />
 
     <activity
@@ -31,11 +30,11 @@
 
     <!-- Foreground Service -->
     <service
-      android:name=".ForegroundService"
+      android:name="app.notifee.core.ForegroundService"
       android:exported="false" />
 
     <receiver
-      android:name=".RebootBroadcastReceiver"
+      android:name="app.notifee.core.RebootBroadcastReceiver"
       android:exported="false">
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -45,7 +44,7 @@
     </receiver>
 
     <receiver
-      android:name=".AlarmPermissionBroadcastReceiver"
+      android:name="app.notifee.core.AlarmPermissionBroadcastReceiver"
       android:exported="true">
       <intent-filter>
         <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
@@ -53,7 +52,7 @@
     </receiver>
 
     <receiver
-      android:name=".NotificationAlarmReceiver"
+      android:name="app.notifee.core.NotificationAlarmReceiver"
       android:exported="false">
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -64,7 +63,7 @@
 
     <!-- Broadcast Receiver -->
     <receiver
-      android:name=".BlockStateBroadcastReceiver"
+      android:name="app.notifee.core.BlockStateBroadcastReceiver"
       android:exported="false">
       <intent-filter>
         <action android:name="android.app.action.APP_BLOCK_STATE_CHANGED" />
@@ -74,7 +73,7 @@
     </receiver>
 
     <provider
-      android:name=".NotifeeInitProvider"
+      android:name="io.invertase.notifee.NotifeeInitProvider"
       android:authorities="${applicationId}.notifee-init-provider"
       android:exported="false"
       android:initOrder="-100" />

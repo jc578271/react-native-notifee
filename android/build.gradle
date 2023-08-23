@@ -133,6 +133,9 @@ dependencies {
   implementation 'org.greenrobot:eventbus:3.3.1' // https://github.com/greenrobot/EventBus/releases
   implementation 'androidx.lifecycle:lifecycle-process:2.3.1'
 
+  api 'androidx.annotation:annotation:1.3.0' // https://developer.android.com/jetpack/androidx/releases/annotation
+  api 'com.facebook.fresco:fresco:2.6.0' // https://github.com/facebook/fresco/releases
+
   def room_version = '2.5.0' // https://developer.android.com/jetpack/androidx/releases/room
   implementation "androidx.room:room-runtime:$room_version"
   annotationProcessor "androidx.room:room-compiler:$room_version"
@@ -155,7 +158,7 @@ ReactNative.module.applyReactNativeDependency("api")
 rootProject.allprojects {
  repositories {
    maven {
-     url "$notifeeDir/android/libs"
+     url "$notifeeDir/android/src"
    }
  }
 }

@@ -452,6 +452,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public onBackgroundEvent = (observer: (event: Event) => Promise<void>): void => {
+    if (!isAndroid) return;
     if (!isFunction(observer)) {
       throw new Error("notifee.onBackgroundEvent(*) 'observer' expected a function.");
     }
@@ -460,6 +461,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public onForegroundEvent = (observer: (event: Event) => void): (() => void) => {
+    if (!isAndroid) return () => {};
     if (!isFunction(observer)) {
       throw new Error("notifee.onForegroundEvent(*) 'observer' expected a function.");
     }

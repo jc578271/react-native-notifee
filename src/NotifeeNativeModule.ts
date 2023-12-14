@@ -39,7 +39,7 @@ export default class NotifeeNativeModule {
   }
 
   public get emitter() {
-    if (!isAndroid) return {};
+    if (!isAndroid) return null;
 
     return NotifeeJSEventEmitter;
   }

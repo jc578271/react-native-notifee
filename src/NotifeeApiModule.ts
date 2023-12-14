@@ -79,25 +79,11 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
           return backgroundEventHandler(event);
         };
       });
-    } else if (isIOS) {
-      this.emitter.addListener(
-        kReactNativeNotifeeNotificationBackgroundEvent,
-        (event: Event): Promise<void> => {
-          if (!backgroundEventHandler) {
-            console.warn(
-              '[notifee] no background event handler has been set. Set a handler via the "onBackgroundEvent" method.',
-            );
-            return Promise.resolve();
-          }
-
-          return backgroundEventHandler(event);
-        },
-      );
     }
   }
 
   public getTriggerNotificationIds = (): Promise<string[]> => {
-    if (isAndroid || isIOS) {
+    if (isAndroid) {
       return this.native.getTriggerNotificationIds();
     }
 
@@ -105,7 +91,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public getTriggerNotifications = (): Promise<TriggerNotification[]> => {
-    if (isAndroid || isIOS) {
+    if (isAndroid) {
       return this.native.getTriggerNotifications();
     }
 
@@ -113,7 +99,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public getDisplayedNotifications = (): Promise<DisplayedNotification[]> => {
-    if (isAndroid || isIOS) {
+    if (isAndroid) {
       return this.native.getDisplayedNotifications();
     }
 
@@ -146,7 +132,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public cancelAllNotifications = (notificationIds?: string[], tag?: string): Promise<void> => {
-    if (isAndroid || isIOS) {
+    if (isAndroid) {
       if (notificationIds) {
         if (isAndroid) {
           return this.native.cancelAllNotificationsWithIds(
@@ -167,7 +153,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
     notificationIds?: string[],
     tag?: string,
   ): Promise<void> => {
-    if (isAndroid || isIOS) {
+    if (isAndroid) {
       if (notificationIds) {
         if (isAndroid) {
           return this.native.cancelAllNotificationsWithIds(
@@ -187,7 +173,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public cancelTriggerNotifications = (notificationIds?: string[]): Promise<void> => {
-    if (isAndroid || isIOS) {
+    if (isAndroid) {
       if (notificationIds) {
         if (isAndroid) {
           return this.native.cancelAllNotificationsWithIds(
@@ -213,10 +199,6 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
       return this.native.cancelAllNotificationsWithIds([notificationId], NotificationType.ALL, tag);
     }
 
-    if (isIOS) {
-      return this.native.cancelNotification(notificationId);
-    }
-
     return Promise.resolve();
   };
 
@@ -235,10 +217,6 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
       );
     }
 
-    if (isIOS) {
-      return this.native.cancelDisplayedNotification(notificationId);
-    }
-
     return Promise.resolve();
   };
 
@@ -255,10 +233,6 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
         NotificationType.TRIGGER,
         null,
       );
-    }
-
-    if (isIOS) {
-      return this.native.cancelTriggerNotification(notificationId);
     }
 
     return Promise.resolve();
@@ -384,7 +358,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
       throw new Error(`notifee.displayNotification(*) ${e.message}`);
     }
 
-    if (isIOS || isAndroid) {
+    if (isAndroid) {
       return this.native.displayNotification(options).then((): string => {
         return options.id as string;
       });
@@ -420,7 +394,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
       throw new Error(`notifee.createTriggerNotification(*) ${e.message}`);
     }
 
-    if (isIOS || isAndroid) {
+    if (isAndroid) {
       return this.native.createTriggerNotification(options, triggerOptions).then((): string => {
         return options.id as string;
       });
@@ -470,7 +444,7 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public getInitialNotification = (): Promise<InitialNotification | null> => {
-    if (isIOS || isAndroid) {
+    if (isAndroid) {
       return this.native.getInitialNotification();
     }
 
@@ -549,33 +523,6 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
         );
     }
 
-    if (isIOS) {
-      let options: IOSNotificationPermissions;
-      try {
-        options = validateIOSPermissions(permissions);
-      } catch (e: any) {
-        throw new Error(`notifee.requestPermission(*) ${e.message}`);
-      }
-
-      return this.native
-        .requestPermission(options)
-        .then(
-          ({
-            authorizationStatus,
-            ios,
-          }: Pick<NotificationSettings, 'authorizationStatus' | 'ios'>) => {
-            return {
-              authorizationStatus,
-              ios,
-              android: {
-                alarm: AndroidNotificationSetting.ENABLED,
-              },
-              web: {},
-            };
-          },
-        );
-    }
-
     // assume web
     return Promise.resolve({
       authorizationStatus: AuthorizationStatus.NOT_DETERMINED,
@@ -612,36 +559,11 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   }
 
   public setNotificationCategories = (categories: IOSNotificationCategory[]): Promise<void> => {
-    if (!isIOS) {
-      return Promise.resolve();
-    }
-
-    if (!isArray(categories)) {
-      throw new Error(
-        "notifee.setNotificationCategories(*) 'categories' expected an array of IOSCategory.",
-      );
-    }
-
-    const options = [];
-    try {
-      for (let i = 0; i < categories.length; i++) {
-        options[i] = validateIOSCategory(categories[i]);
-      }
-    } catch (e: any) {
-      throw new Error(
-        `notifee.setNotificationCategories(*) 'categories' a category is invalid: ${e.message}`,
-      );
-    }
-
-    return this.native.setNotificationCategories(categories);
+    return Promise.resolve();
   };
 
   public getNotificationCategories = (): Promise<IOSNotificationCategory[]> => {
-    if (!isIOS) {
-      return Promise.resolve([]);
-    }
-
-    return this.native.getNotificationCategories();
+    return Promise.resolve([]);
   };
 
   public getNotificationSettings = (): Promise<NotificationSettings> => {
@@ -675,25 +597,6 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
         );
     }
 
-    if (isIOS) {
-      return this.native
-        .getNotificationSettings()
-        .then(
-          ({
-            authorizationStatus,
-            ios,
-          }: Pick<NotificationSettings, 'authorizationStatus' | 'ios'>) => {
-            return {
-              authorizationStatus,
-              ios,
-              android: {
-                alarm: AndroidNotificationSetting.ENABLED,
-              },
-            };
-          },
-        );
-    }
-
     // assume web
     return Promise.resolve({
       authorizationStatus: AuthorizationStatus.NOT_DETERMINED,
@@ -718,61 +621,19 @@ export default class NotifeeApiModule extends NotifeeNativeModule implements Mod
   };
 
   public getBadgeCount = (): Promise<number> => {
-    if (!isIOS) {
-      return Promise.resolve(0);
-    }
-
-    return this.native.getBadgeCount();
+    return Promise.resolve(0);
   };
 
   public setBadgeCount = (count: number): Promise<void> => {
-    if (!isIOS) {
-      return Promise.resolve();
-    }
-
-    if (!isNumber(count) || count < 0) {
-      throw new Error("notifee.setBadgeCount(*) 'count' expected a number value greater than 0.");
-    }
-
-    return this.native.setBadgeCount(Math.round(count));
+    return Promise.resolve();
   };
 
   public incrementBadgeCount = (incrementBy?: number): Promise<void> => {
-    if (!isIOS) {
-      return Promise.resolve();
-    }
-
-    let value = 1;
-    if (!isUndefined(incrementBy)) {
-      if (!isNumber(incrementBy) || incrementBy < 1) {
-        throw new Error(
-          "notifee.decrementBadgeCount(*) 'incrementBy' expected a number value greater than 1.",
-        );
-      }
-
-      value = incrementBy;
-    }
-
-    return this.native.incrementBadgeCount(Math.round(value));
+    return Promise.resolve();
   };
 
   public decrementBadgeCount = (decrementBy?: number): Promise<void> => {
-    if (!isIOS) {
-      return Promise.resolve();
-    }
-
-    let value = 1;
-    if (!isUndefined(decrementBy)) {
-      if (!isNumber(decrementBy) || decrementBy < 1) {
-        throw new Error(
-          "notifee.decrementBadgeCount(*) 'decrementBy' expected a number value greater than 1.",
-        );
-      }
-
-      value = decrementBy;
-    }
-
-    return this.native.decrementBadgeCount(Math.round(value));
+    return Promise.resolve();
   };
 
   public isBatteryOptimizationEnabled = (): Promise<boolean> => {

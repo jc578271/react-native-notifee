@@ -9,6 +9,7 @@ import {
   NativeModules,
   NativeModulesStatic,
 } from 'react-native';
+import {isAndroid} from "./utils";
 
 export interface NativeModuleConfig {
   version: string;
@@ -17,11 +18,13 @@ export interface NativeModuleConfig {
 }
 
 export default class NotifeeNativeModule {
-  private readonly _moduleConfig: NativeModuleConfig;
-  private _nativeModule: NativeModulesStatic | null;
-  private _nativeEmitter: NativeEventEmitter;
+  private readonly _moduleConfig: NativeModuleConfig | null = null;
+  private _nativeModule: NativeModulesStatic | null = null;
+  private _nativeEmitter: NativeEventEmitter | null = null;
 
   public constructor(config: NativeModuleConfig) {
+    if (!isAndroid) return;
+
     this._nativeModule = null;
     this._moduleConfig = Object.assign({}, config);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -36,15 +39,22 @@ export default class NotifeeNativeModule {
   }
 
   public get emitter() {
+    if (!isAndroid) return {};
+
     return NotifeeJSEventEmitter;
   }
 
   public get native(): NativeModulesStatic {
+    if (!isAndroid) return {};
+
     if (this._nativeModule) {
       return this._nativeModule;
     }
 
-    this._nativeModule = NativeModules[this._moduleConfig.nativeModuleName];
+    if (this._moduleConfig) {
+      this._nativeModule = NativeModules[this._moduleConfig.nativeModuleName];
+    }
+
     if (this._nativeModule == null) {
       throw new Error('Notifee native module not found.');
     }

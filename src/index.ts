@@ -7,7 +7,6 @@ import { ModuleStatics, ModuleWithStatics } from './types/Module';
 import { version as SDK_VERSION } from './version';
 import {
   isIOS,
-  kReactNativeNotifeeNotificationBackgroundEvent,
   kReactNativeNotifeeNotificationEvent,
 } from './utils';
 
@@ -15,7 +14,7 @@ const apiModule = new NotifeeApiModule({
   version: SDK_VERSION,
   nativeModuleName: 'NotifeeApiModule',
   nativeEvents: isIOS
-    ? [kReactNativeNotifeeNotificationEvent, kReactNativeNotifeeNotificationBackgroundEvent]
+    ? []
     : [kReactNativeNotifeeNotificationEvent],
 });
 

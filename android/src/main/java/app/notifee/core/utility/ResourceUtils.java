@@ -40,8 +40,8 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,27 +97,17 @@ public class ResourceUtils {
     final int height = bitmap.getHeight();
 
     if (width > height) {
-      int padding = height/5;
       output = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
       int left = (width - height) / 2;
       int right = left + height;
-      srcRect = new Rect(
-              left - padding,
-              0 - padding,
-              right + padding,
-              height + padding);
+      srcRect = new Rect(left, 0, right, height);
       dstRect = new Rect(0, 0, height, height);
       r = height / 2;
     } else {
-      int padding = width/5;
       output = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
-//      int top = (height - width) / 2;
-//      int bottom = top + width;
-      srcRect = new Rect(
-              - padding,
-              - padding,
-              width + padding,
-              width + padding);
+      int top = (height - width) / 2;
+      int bottom = top + width;
+      srcRect = new Rect(0, top, width, bottom);
       dstRect = new Rect(0, 0, width, width);
       r = width / 2;
     }
@@ -143,16 +133,15 @@ public class ResourceUtils {
    * @param imageUrl
    * @return Bitmap or null if the image failed to load
    */
-  public static Task<Bitmap> getImageBitmapFromUrl(String imageUrl) {
+  public static ListenableFuture<Bitmap> getImageBitmapFromUrl(String imageUrl) {
     Uri imageUri;
-    final TaskCompletionSource<Bitmap> bitmapTCS = new TaskCompletionSource<>();
-    Task<Bitmap> bitmapTask = bitmapTCS.getTask();
+    final SettableFuture<Bitmap> bitmapTCS = SettableFuture.create();
 
     if (!imageUrl.contains("/")) {
       String imageResourceUrl = getImageResourceUrl(imageUrl);
       if (imageResourceUrl == null) {
-        bitmapTCS.setResult(null);
-        return bitmapTask;
+        bitmapTCS.set(null);
+        return bitmapTCS;
       }
       imageUri = getImageSourceUri(imageResourceUrl);
     } else {
@@ -178,20 +167,19 @@ public class ResourceUtils {
         new BaseBitmapDataSubscriber() {
           @Override
           protected void onNewResultImpl(@Nullable Bitmap bitmap) {
-            Bitmap roundedBitMap = getCircularBitmap(bitmap);
-            bitmapTCS.setResult(roundedBitMap);
+            bitmapTCS.set(bitmap);
           }
 
           @Override
           protected void onFailureImpl(
               @NonNull DataSource<CloseableReference<CloseableImage>> dataSource) {
             Logger.e(TAG, "Failed to load an image: " + imageUrl, dataSource.getFailureCause());
-            bitmapTCS.setResult(null);
+            bitmapTCS.set(null);
           }
         },
         CallerThreadExecutor.getInstance());
 
-    return bitmapTask;
+    return bitmapTCS;
   }
 
   /**

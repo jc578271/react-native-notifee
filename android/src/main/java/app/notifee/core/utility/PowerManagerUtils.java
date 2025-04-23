@@ -17,6 +17,8 @@ package app.notifee.core.utility;
  *
  */
 
+import static app.notifee.core.ContextHolder.getApplicationContext;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,6 +28,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
+
 import app.notifee.core.ContextHolder;
 import app.notifee.core.Logger;
 import java.util.ArrayList;

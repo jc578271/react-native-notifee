@@ -7,6 +7,8 @@ package io.invertase.notifee;
 import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import app.notifee.core.Logger;
 import app.notifee.core.Notifee;
@@ -30,15 +32,26 @@ public class NotifeeApiModule extends ReactContextBaseJavaModule implements Perm
 
   public NotifeeApiModule(@NonNull ReactApplicationContext reactContext) {
     super(reactContext);
+
+    app.notifee.core.ContextHolder.setApplicationContext(reactContext.getApplicationContext());
   }
 
   public static String getMainComponent(@NonNull String defaultComponent) {
     return Notifee.getInstance().getMainComponent(defaultComponent);
   }
 
-  @Override
+  // This method was removed upstream in react-native 0.74+, replaced with invalidate
+  // We will leave this stub here for older react-native versions compatibility
+  // ...but it will just delegate to the new invalidate method
   public void onCatalystInstanceDestroy() {
-    NotifeeReactUtils.clearRunningHeadlessTasks();
+    invalidate();
+  }
+
+  // This method was added in react-native 0.74 as a replacement for onCatalystInstanceDestroy
+  // It should be marked @Override but that would cause problems in apps using older react-native
+  // When minimum supported version is 0.74+ add @Override & remove onCatalystInstanceDestroy
+  public void invalidate() {
+    NotifeeReactUtils.headlessTaskManager.stopAllTasks();
   }
 
   @ReactMethod
@@ -264,10 +277,17 @@ public class NotifeeApiModule extends ReactContextBaseJavaModule implements Perm
         .setRequestPermissionCallback(
             (e, aBundle) -> NotifeeReactUtils.promiseResolver(promise, e, aBundle));
 
-    activity.requestPermissions(
-        new String[] {Manifest.permission.POST_NOTIFICATIONS},
-        Notifee.REQUEST_CODE_NOTIFICATION_PERMISSION,
-        this);
+    try {
+      activity.requestPermissions(
+          new String[] {Manifest.permission.POST_NOTIFICATIONS},
+          Notifee.REQUEST_CODE_NOTIFICATION_PERMISSION,
+          this);
+    } catch (Exception e) {
+      Logger.d(
+          "requestPermission",
+          "Failed to request POST_NOTIFICATIONS permission: " + e.getMessage());
+      NotifeeReactUtils.promiseResolver(promise, e);
+    }
   }
 
   @ReactMethod

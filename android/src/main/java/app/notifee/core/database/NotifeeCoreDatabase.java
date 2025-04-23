@@ -24,13 +24,15 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(
-    entities = {WorkDataEntity.class},
-    version = 2,
-    exportSchema = true)
+        entities = {WorkDataEntity.class},
+        version = 2,
+        exportSchema = true)
 public abstract class NotifeeCoreDatabase extends RoomDatabase {
 
   public abstract WorkDataDao workDao();
@@ -38,6 +40,8 @@ public abstract class NotifeeCoreDatabase extends RoomDatabase {
   private static volatile NotifeeCoreDatabase INSTANCE;
 
   static final ExecutorService databaseWriteExecutor = Executors.newCachedThreadPool();
+  static final ListeningExecutorService databaseWriteListeningExecutor =
+          MoreExecutors.listeningDecorator(databaseWriteExecutor);
 
   /**
    * Migrate from: version 1 to version 2 - where the {@link WorkDataEntity} has an extra field:
@@ -45,26 +49,26 @@ public abstract class NotifeeCoreDatabase extends RoomDatabase {
    */
   @VisibleForTesting
   static final Migration MIGRATION_1_2 =
-      new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-          database.execSQL(
-              "ALTER TABLE work_data"
-                  + " ADD COLUMN with_alarm_manager INTEGER NOT NULL DEFAULT 0");
-        }
-      };
+          new Migration(1, 2) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+              database.execSQL(
+                      "ALTER TABLE work_data"
+                              + " ADD COLUMN with_alarm_manager INTEGER NOT NULL DEFAULT 0");
+            }
+          };
 
   static NotifeeCoreDatabase getDatabase(final Context context) {
     if (INSTANCE == null) {
       synchronized (NotifeeCoreDatabase.class) {
         if (INSTANCE == null) {
           INSTANCE =
-              Room.databaseBuilder(
-                      context.getApplicationContext(),
-                      NotifeeCoreDatabase.class,
-                      "notifee_core_database")
-                  .addMigrations(MIGRATION_1_2)
-                  .build();
+                  Room.databaseBuilder(
+                                  context.getApplicationContext(),
+                                  NotifeeCoreDatabase.class,
+                                  "notifee_core_database")
+                          .addMigrations(MIGRATION_1_2)
+                          .build();
         }
       }
     }

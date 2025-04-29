@@ -15,7 +15,7 @@ const apiModule = new NotifeeApiModule({
   version: SDK_VERSION,
   nativeModuleName: 'NotifeeApiModule',
   nativeEvents: isIOS
-    ? [kReactNativeNotifeeNotificationEvent, kReactNativeNotifeeNotificationBackgroundEvent]
+    ? []
     : [kReactNativeNotifeeNotificationEvent],
 });
 

@@ -16,7 +16,6 @@
     "format:ios": "npm_config_yes=true npx clang-format -i --glob=\"*/**/*.{h,cpp,m,mm}\" --style=Google"
   },
   "devDependencies": {
-    "@types/react-native": "0.67.2",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
     "eslint": "^7.32.0",

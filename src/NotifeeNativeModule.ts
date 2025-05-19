@@ -8,6 +8,7 @@ import {
   NativeEventEmitter,
   NativeModules,
   NativeModulesStatic,
+  Platform,
 } from 'react-native';
 
 export interface NativeModuleConfig {
@@ -46,6 +47,7 @@ export default class NotifeeNativeModule {
 
     this._nativeModule = NativeModules[this._moduleConfig.nativeModuleName];
     if (this._nativeModule == null) {
+      if (Platform.OS === "ios") return {}
       throw new Error('Notifee native module not found.');
     }
 
